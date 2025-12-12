@@ -23,41 +23,69 @@
             margin: 0 auto;
         }
 
-        header {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        /* Auth Pages */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        h1 {
+        .auth-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .auth-box h1 {
             color: #667eea;
             margin-bottom: 10px;
+            text-align: center;
         }
 
-        .user-section {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
+        .auth-box p {
+            color: #666;
+            margin-bottom: 30px;
+            text-align: center;
         }
 
-        .user-section input, .user-section select {
-            padding: 10px;
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
             border: 2px solid #e0e0e0;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 14px;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
         }
 
         .btn {
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
             font-weight: 600;
             transition: all 0.3s;
+            width: 100%;
         }
 
         .btn-primary {
@@ -79,17 +107,69 @@
             background: #38a169;
         }
 
+        .btn-danger {
+            background: #f56565;
+            color: white;
+            padding: 10px 20px;
+            width: auto;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .auth-switch a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+
+        /* Main App */
+        header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-left h1 {
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .user-info {
+            color: #666;
+            font-size: 14px;
+        }
+
         .tabs {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .tab {
             padding: 12px 24px;
             background: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
@@ -131,13 +211,18 @@
         .item-image {
             width: 100%;
             height: 200px;
-            object-fit: cover;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-size: 48px;
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .item-content {
@@ -198,39 +283,56 @@
             font-size: 14px;
         }
 
-        .form-group {
+        .create-form {
             background: white;
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        .form-group label {
+        .create-form h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .create-form label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
             color: #333;
         }
 
-        .form-group input, .form-group textarea, .form-group select {
+        .create-form input, .create-form textarea, .create-form select {
             width: 100%;
             padding: 12px;
             margin-bottom: 20px;
             border: 2px solid #e0e0e0;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 14px;
             font-family: inherit;
         }
 
-        .form-group textarea {
+        .create-form textarea {
             resize: vertical;
             min-height: 100px;
         }
 
         .alert {
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 8px;
             margin-bottom: 20px;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .alert-success {
@@ -245,25 +347,87 @@
             border: 1px solid #f5c6cb;
         }
 
+        .hidden {
+            display: none !important;
+        }
+
         @media (max-width: 768px) {
             .items-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: flex-start;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🔨 Online Bidding System</h1>
-            <div class="user-section">
-                <select id="userSelect">
-                    <option value="">Select User</option>
-                </select>
-                <input type="text" id="newUsername" placeholder="New username">
-                <input type="email" id="newEmail" placeholder="Email">
-                <button class="btn btn-primary" onclick="createUser()">Create User</button>
+    <!-- Login Page -->
+    <div id="loginPage" class="auth-container">
+        <div class="auth-box">
+            <h1>🔨 Login</h1>
+            <p>Welcome back to Online Bidding System</p>
+            <div id="loginAlert"></div>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="loginUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            <div class="auth-switch">
+                Don't have an account? <a href="#" onclick="showSignup()">Sign Up</a>
             </div>
+        </div>
+    </div>
+
+    <!-- Signup Page -->
+    <div id="signupPage" class="auth-container hidden">
+        <div class="auth-box">
+            <h1>🔨 Sign Up</h1>
+            <p>Create your account to start bidding</p>
+            <div id="signupAlert"></div>
+            <form onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signupFullName" required>
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="signupUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signupPassword" required minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+            </form>
+            <div class="auth-switch">
+                Already have an account? <a href="#" onclick="showLogin()">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="container hidden">
+        <header>
+            <div class="header-left">
+                <h1>🔨 Online Bidding System</h1>
+                <div class="user-info">
+                    Welcome, <strong id="currentUsername"></strong>
+                </div>
+            </div>
+            <button class="btn btn-danger" onclick="handleLogout()">Logout</button>
         </header>
 
         <div class="tabs">
@@ -278,8 +442,8 @@
         </div>
 
         <div id="createSection" class="content-section">
-            <div class="form-group">
-                <h2 style="margin-bottom: 20px; color: #667eea;">Create New Listing</h2>
+            <div class="create-form">
+                <h2>Create New Listing</h2>
                 <label>Item Title</label>
                 <input type="text" id="itemTitle" placeholder="Enter item title">
 
@@ -311,53 +475,134 @@
         const API_URL = 'http://localhost:5000/api';
         let currentUser = null;
 
-        async function loadUsers() {
+        // Check authentication on page load
+        async function checkAuth() {
             try {
-                const response = await fetch(`${API_URL}/users`);
-                const users = await response.json();
-                const select = document.getElementById('userSelect');
-                select.innerHTML = '<option value="">Select User</option>';
-                users.forEach(user => {
-                    const option = document.createElement('option');
-                    option.value = user.id;
-                    option.textContent = user.username;
-                    select.appendChild(option);
+                const response = await fetch(`${API_URL}/auth/check`, {
+                    credentials: 'include'
                 });
-            } catch (error) {
-                console.error('Error loading users:', error);
-            }
-        }
-
-        async function createUser() {
-            const username = document.getElementById('newUsername').value;
-            const email = document.getElementById('newEmail').value;
-
-            if (!username || !email) {
-                showAlert('Please enter username and email', 'error');
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_URL}/users`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, email })
-                });
-
-                if (response.ok) {
-                    showAlert('User created successfully!', 'success');
-                    document.getElementById('newUsername').value = '';
-                    document.getElementById('newEmail').value = '';
-                    loadUsers();
+                const data = await response.json();
+                
+                if (data.authenticated) {
+                    currentUser = data.user;
+                    showMainApp();
                 } else {
-                    const error = await response.json();
-                    showAlert(error.error || 'Failed to create user', 'error');
+                    showLogin();
                 }
             } catch (error) {
-                showAlert('Error creating user', 'error');
+                console.error('Auth check failed:', error);
+                showLogin();
             }
         }
 
+        // Handle Login
+        async function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentUser = data.user;
+                    showMainApp();
+                } else {
+                    showAuthAlert('loginAlert', data.error || 'Login failed', 'error');
+                }
+            } catch (error) {
+                showAuthAlert('loginAlert', 'Error connecting to server', 'error');
+            }
+        }
+
+        // Handle Signup
+        async function handleSignup(event) {
+            event.preventDefault();
+            const fullName = document.getElementById('signupFullName').value;
+            const username = document.getElementById('signupUsername').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ full_name: fullName, username, email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentUser = data.user;
+                    showMainApp();
+                } else {
+                    showAuthAlert('signupAlert', data.error || 'Signup failed', 'error');
+                }
+            } catch (error) {
+                showAuthAlert('signupAlert', 'Error connecting to server', 'error');
+            }
+        }
+
+        // Handle Logout
+        async function handleLogout() {
+            try {
+                await fetch(`${API_URL}/auth/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                currentUser = null;
+                showLogin();
+            } catch (error) {
+                console.error('Logout failed:', error);
+            }
+        }
+
+        // Show/Hide Pages
+        function showLogin() {
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('signupPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+        }
+
+        function showSignup() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('signupPage').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+        }
+
+        function showMainApp() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('signupPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('currentUsername').textContent = currentUser.username;
+            loadItems();
+        }
+
+        // Show alerts
+        function showAuthAlert(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            container.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        // Load items
         async function loadItems() {
             try {
                 const response = await fetch(`${API_URL}/items`);
@@ -366,7 +611,7 @@
                 grid.innerHTML = '';
 
                 if (items.length === 0) {
-                    grid.innerHTML = '<p style="color: white; text-align: center;">No active auctions</p>';
+                    grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1/-1;">No active auctions</p>';
                     return;
                 }
 
@@ -379,14 +624,16 @@
             }
         }
 
+        // Create item card
         function createItemCard(item) {
             const card = document.createElement('div');
             card.className = 'item-card';
-
             const timeRemaining = getTimeRemaining(item.end_time);
 
             card.innerHTML = `
-                <div class="item-image">${item.image_url ? `<img src="${item.image_url}" style="width:100%;height:100%;object-fit:cover;">` : '🏆'}</div>
+                <div class="item-image">
+                    ${item.image_url ? `<img src="${item.image_url}" alt="${item.title}">` : '🏆'}
+                </div>
                 <div class="item-content">
                     <div class="item-title">${item.title}</div>
                     <div class="item-description">${item.description || 'No description'}</div>
@@ -396,15 +643,17 @@
                         <div class="bid-count">${item.bid_count} bid(s)</div>
                     </div>
                     <div class="bid-section">
-                        <input type="number" class="bid-input" id="bid-${item.id}" placeholder="Enter bid" step="0.01" min="${parseFloat(item.current_price) + 0.01}">
+                        <input type="number" class="bid-input" id="bid-${item.id}" 
+                               placeholder="Enter bid" step="0.01" 
+                               min="${parseFloat(item.current_price) + 0.01}">
                         <button class="btn btn-success" onclick="placeBid(${item.id})">Bid</button>
                     </div>
                 </div>
             `;
-
             return card;
         }
 
+        // Get time remaining
         function getTimeRemaining(endTime) {
             const end = new Date(endTime);
             const now = new Date();
@@ -415,20 +664,12 @@
             const hours = Math.floor(diff / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
-            if (hours > 0) {
-                return `${hours}h ${minutes}m remaining`;
-            }
-            return `${minutes}m remaining`;
+            return hours > 0 ? `${hours}h ${minutes}m remaining` : `${minutes}m remaining`;
         }
 
+        // Place bid
         async function placeBid(itemId) {
-            const userId = document.getElementById('userSelect').value;
             const bidAmount = document.getElementById(`bid-${itemId}`).value;
-
-            if (!userId) {
-                showAlert('Please select a user first', 'error');
-                return;
-            }
 
             if (!bidAmount || parseFloat(bidAmount) <= 0) {
                 showAlert('Please enter a valid bid amount', 'error');
@@ -439,37 +680,30 @@
                 const response = await fetch(`${API_URL}/bids`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        item_id: itemId,
-                        user_id: userId,
-                        bid_amount: bidAmount
-                    })
+                    credentials: 'include',
+                    body: JSON.stringify({ item_id: itemId, bid_amount: bidAmount })
                 });
+
+                const data = await response.json();
 
                 if (response.ok) {
                     showAlert('Bid placed successfully!', 'success');
                     loadItems();
                 } else {
-                    const error = await response.json();
-                    showAlert(error.error || 'Failed to place bid', 'error');
+                    showAlert(data.error || 'Failed to place bid', 'error');
                 }
             } catch (error) {
                 showAlert('Error placing bid', 'error');
             }
         }
 
+        // Create item
         async function createItem() {
-            const userId = document.getElementById('userSelect').value;
             const title = document.getElementById('itemTitle').value;
             const description = document.getElementById('itemDescription').value;
             const startingPrice = document.getElementById('startingPrice').value;
             const imageUrl = document.getElementById('imageUrl').value;
             const duration = document.getElementById('duration').value;
-
-            if (!userId) {
-                showAlert('Please select a user first', 'error');
-                return;
-            }
 
             if (!title || !startingPrice) {
                 showAlert('Please fill in required fields', 'error');
@@ -480,15 +714,14 @@
                 const response = await fetch(`${API_URL}/items`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
                     body: JSON.stringify({
-                        title,
-                        description,
-                        starting_price: startingPrice,
-                        image_url: imageUrl,
-                        duration,
-                        seller_id: userId
+                        title, description, starting_price: startingPrice,
+                        image_url: imageUrl, duration
                     })
                 });
+
+                const data = await response.json();
 
                 if (response.ok) {
                     showAlert('Item created successfully!', 'success');
@@ -497,28 +730,15 @@
                     document.getElementById('startingPrice').value = '';
                     document.getElementById('imageUrl').value = '';
                     showTab('browse');
-                    loadItems();
                 } else {
-                    const error = await response.json();
-                    showAlert(error.error || 'Failed to create item', 'error');
+                    showAlert(data.error || 'Failed to create item', 'error');
                 }
             } catch (error) {
                 showAlert('Error creating item', 'error');
             }
         }
 
-        function showAlert(message, type) {
-            const container = document.getElementById('alertContainer');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.textContent = message;
-            container.appendChild(alert);
-
-            setTimeout(() => {
-                alert.remove();
-            }, 5000);
-        }
-
+        // Show tab
         function showTab(tab) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
@@ -526,14 +746,14 @@
             event.target.classList.add('active');
             document.getElementById(`${tab}Section`).classList.add('active');
 
-            if (tab === 'browse') {
-                loadItems();
-            }
+            if (tab === 'browse') loadItems();
         }
 
-        loadUsers();
-        loadItems();
-        setInterval(loadItems, 10000);
+        // Initialize
+        checkAuth();
+        setInterval(() => {
+            if (currentUser) loadItems();
+        }, 10000);
     </script>
 </body>
 </html>

@@ -1,12 +1,15 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, session
 from flask_cors import CORS
 import mysql.connector
 from mysql.connector import Error
 from datetime import datetime, timedelta
+import hashlib
+import secrets
 import os
 
 app = Flask(__name__, static_folder='static')
-CORS(app)
+app.secret_key = secrets.token_hex(16)  # Generate random secret key
+CORS(app, supports_credentials=True)
 
 # Database configuration
 DB_CONFIG = {
@@ -24,21 +27,26 @@ def get_db_connection():
         print(f"Error: {e}")
         return None
 
+def hash_password(password):
+    """Hash password using SHA-256"""
+    return hashlib.sha256(password.encode()).hexdigest()
+
 def init_db():
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
         
-        # Create database if not exists
         cursor.execute("CREATE DATABASE IF NOT EXISTS bidding_system")
         cursor.execute("USE bidding_system")
         
-        # Create users table
+        # Create users table with password
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 username VARCHAR(50) UNIQUE NOT NULL,
                 email VARCHAR(100) UNIQUE NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                full_name VARCHAR(100),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
@@ -78,13 +86,9 @@ def init_db():
         conn.close()
         print("Database initialized successfully")
 
-# Routes
-@app.route('/')
-def index():
-    return send_from_directory('static', 'index.html')
-
-@app.route('/api/users', methods=['POST'])
-def create_user():
+# Authentication Routes
+@app.route('/api/auth/signup', methods=['POST'])
+def signup():
     data = request.json
     conn = get_db_connection()
     if not conn:
@@ -92,18 +96,93 @@ def create_user():
     
     cursor = conn.cursor()
     try:
+        hashed_password = hash_password(data['password'])
         cursor.execute(
-            "INSERT INTO users (username, email) VALUES (%s, %s)",
-            (data['username'], data['email'])
+            "INSERT INTO users (username, email, password, full_name) VALUES (%s, %s, %s, %s)",
+            (data['username'], data['email'], hashed_password, data.get('full_name', ''))
         )
         conn.commit()
         user_id = cursor.lastrowid
-        return jsonify({'id': user_id, 'username': data['username']}), 201
+        
+        # Create session
+        session['user_id'] = user_id
+        session['username'] = data['username']
+        
+        return jsonify({
+            'message': 'User created successfully',
+            'user': {
+                'id': user_id,
+                'username': data['username'],
+                'email': data['email']
+            }
+        }), 201
     except Error as e:
         return jsonify({'error': str(e)}), 400
     finally:
         cursor.close()
         conn.close()
+
+@app.route('/api/auth/login', methods=['POST'])
+def login():
+    data = request.json
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({'error': 'Database connection failed'}), 500
+    
+    cursor = conn.cursor(dictionary=True)
+    try:
+        hashed_password = hash_password(data['password'])
+        cursor.execute(
+            "SELECT id, username, email, full_name FROM users WHERE username = %s AND password = %s",
+            (data['username'], hashed_password)
+        )
+        user = cursor.fetchone()
+        
+        if user:
+            # Create session
+            session['user_id'] = user['id']
+            session['username'] = user['username']
+            
+            return jsonify({
+                'message': 'Login successful',
+                'user': user
+            }), 200
+        else:
+            return jsonify({'error': 'Invalid username or password'}), 401
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/api/auth/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return jsonify({'message': 'Logged out successfully'}), 200
+
+@app.route('/api/auth/check', methods=['GET'])
+def check_auth():
+    if 'user_id' in session:
+        return jsonify({
+            'authenticated': True,
+            'user': {
+                'id': session['user_id'],
+                'username': session['username']
+            }
+        }), 200
+    return jsonify({'authenticated': False}), 200
+
+# Protected route decorator
+def login_required(f):
+    def wrapper(*args, **kwargs):
+        if 'user_id' not in session:
+            return jsonify({'error': 'Authentication required'}), 401
+        return f(*args, **kwargs)
+    wrapper.__name__ = f.__name__
+    return wrapper
+
+# Routes
+@app.route('/')
+def index():
+    return send_from_directory('static', 'index.html')
 
 @app.route('/api/users', methods=['GET'])
 def get_users():
@@ -112,13 +191,14 @@ def get_users():
         return jsonify({'error': 'Database connection failed'}), 500
     
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT id, username, email FROM users")
+    cursor.execute("SELECT id, username, email, full_name FROM users")
     users = cursor.fetchall()
     cursor.close()
     conn.close()
     return jsonify(users)
 
 @app.route('/api/items', methods=['POST'])
+@login_required
 def create_item():
     data = request.json
     conn = get_db_connection()
@@ -134,7 +214,7 @@ def create_item():
                VALUES (%s, %s, %s, %s, %s, %s, %s)""",
             (data['title'], data['description'], data['starting_price'],
              data['starting_price'], data.get('image_url', ''), 
-             end_time, data['seller_id'])
+             end_time, session['user_id'])
         )
         conn.commit()
         item_id = cursor.lastrowid
@@ -207,6 +287,7 @@ def get_item(item_id):
     return jsonify(item) if item else jsonify({'error': 'Item not found'}), 404
 
 @app.route('/api/bids', methods=['POST'])
+@login_required
 def place_bid():
     data = request.json
     conn = get_db_connection()
@@ -215,7 +296,6 @@ def place_bid():
     
     cursor = conn.cursor(dictionary=True)
     try:
-        # Check current price
         cursor.execute("SELECT current_price, end_time FROM items WHERE id = %s", 
                       (data['item_id'],))
         item = cursor.fetchone()
@@ -229,13 +309,11 @@ def place_bid():
         if float(data['bid_amount']) <= float(item['current_price']):
             return jsonify({'error': 'Bid must be higher than current price'}), 400
         
-        # Place bid
         cursor.execute(
             "INSERT INTO bids (item_id, user_id, bid_amount) VALUES (%s, %s, %s)",
-            (data['item_id'], data['user_id'], data['bid_amount'])
+            (data['item_id'], session['user_id'], data['bid_amount'])
         )
         
-        # Update item current price
         cursor.execute(
             "UPDATE items SET current_price = %s WHERE id = %s",
             (data['bid_amount'], data['item_id'])
@@ -253,4 +331,3 @@ def place_bid():
 if __name__ == '__main__':
     init_db()
     app.run(debug=True, port=5000)
-    
