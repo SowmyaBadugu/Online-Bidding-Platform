@@ -1,0 +1,36 @@
+services:
+  # Web Service (Flask Backend + Frontend)
+  - type: web
+    name: bidding-system
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DB_HOST
+        fromDatabase:
+          name: bidding-db
+          property: host
+      - key: DB_USER
+        fromDatabase:
+          name: bidding-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: bidding-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: bidding-db
+          property: database
+      - key: DB_PORT
+        fromDatabase:
+          name: bidding-db
+          property: port
+
+databases:
+  # MySQL Database
+  - name: bidding-db
+    databaseName: bidding_system
+    user: bidding_user
