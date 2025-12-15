@@ -472,7 +472,8 @@
     </div>
 
     <script>
-        const API_URL = 'https://online-bidding-platform-1.onrender.com/api';
+        // Use current domain for API calls (works for both local and production)
+        const API_URL = window.location.origin + '/api';
         let currentUser = null;
 
         // Check authentication on page load
@@ -605,7 +606,9 @@
         // Load items
         async function loadItems() {
             try {
-                const response = await fetch(`${API_URL}/items`);
+                const response = await fetch(`${API_URL}/items`, {
+                    credentials: 'include'
+                });
                 const items = await response.json();
                 const grid = document.getElementById('itemsGrid');
                 grid.innerHTML = '';
